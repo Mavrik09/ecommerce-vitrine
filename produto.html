@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produto</title>
+  <link rel="stylesheet" href="css/custom.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span id="header-nome" class="font-bold text-gray-800">Voltar</span>
+      </a>
+      <a href="carrinho.html" class="relative flex items-center text-gray-600 hover:text-blue-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3A1 1 0 006 17h12m-5 4a1 1 0 100-2 1 1 0 000 2zm-6 0a1 1 0 100-2 1 1 0 000 2z"/>
+        </svg>
+        <span data-cart-badge
+          class="hidden absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center px-1">
+          0
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <!-- LOADING -->
+  <div id="loading" class="flex-1 flex items-center justify-center py-20">
+    <div class="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+  </div>
+
+  <!-- ERRO -->
+  <div id="erro" class="hidden flex-1 flex flex-col items-center justify-center py-20 text-gray-400">
+    <div class="text-5xl mb-4">⚠️</div>
+    <p class="text-lg font-medium">Produto não encontrado.</p>
+    <a href="index.html" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700">
+      Ver todos os produtos
+    </a>
+  </div>
+
+  <!-- CONTEÚDO DO PRODUTO -->
+  <main id="conteudo" class="hidden flex-1 max-w-6xl mx-auto w-full px-4 py-8">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+
+      <!-- Imagem -->
+      <div class="bg-white rounded-2xl overflow-hidden shadow-sm flex items-center justify-center p-4">
+        <img id="produto-imagem" src="" alt=""
+          class="produto-imagem-detalhe rounded-xl"
+          onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27400%27 height=%27400%27 viewBox=%270 0 400 400%27%3E%3Crect width=%27400%27 height=%27400%27 fill=%27%23f3f4f6%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 font-size=%2764%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 fill=%27%239ca3af%27%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E'; this.onerror=null;" />
+      </div>
+
+      <!-- Informações -->
+      <div class="flex flex-col">
+
+        <!-- Badge categoria -->
+        <span id="produto-categoria"
+          class="hidden self-start mb-3 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full uppercase tracking-wide">
+        </span>
+
+        <h1 id="produto-nome" class="text-2xl md:text-3xl font-bold text-gray-900 leading-snug mb-4"></h1>
+
+        <!-- Preços -->
+        <div id="produto-precos" class="flex items-baseline gap-3 mb-4">
+          <span id="produto-preco-original" class="hidden text-gray-400 line-through text-lg"></span>
+          <span id="produto-preco-final" class="text-3xl font-bold text-blue-600"></span>
+          <span id="produto-badge-promo"
+            class="hidden bg-green-100 text-green-700 text-sm font-semibold px-2 py-0.5 rounded-full">
+            Promoção
+          </span>
+        </div>
+
+        <!-- Esgotado -->
+        <div id="badge-esgotado"
+          class="hidden mb-4 inline-flex items-center gap-2 bg-red-50 text-red-600 font-semibold text-sm px-4 py-2 rounded-xl self-start">
+          <span>●</span> Produto esgotado
+        </div>
+
+        <!-- Descrição -->
+        <p id="produto-descricao" class="text-gray-600 text-sm leading-relaxed mb-6"></p>
+
+        <!-- Seletor de quantidade -->
+        <div id="controles-compra">
+          <label class="text-sm font-medium text-gray-700 mb-2 block">Quantidade</label>
+          <div class="flex items-center gap-4 mb-6">
+            <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+              <button onclick="alterarQtd(-1)"
+                class="qty-btn bg-gray-50 hover:bg-gray-100 text-gray-700 px-3">−</button>
+              <span id="qtd-display"
+                class="w-10 text-center text-gray-800 font-semibold text-sm">1</span>
+              <button onclick="alterarQtd(1)"
+                class="qty-btn bg-gray-50 hover:bg-gray-100 text-gray-700 px-3">+</button>
+            </div>
+            <span id="estoque-info" class="text-xs text-gray-400"></span>
+          </div>
+
+          <!-- Botões de ação -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="handleAddToCart()"
+              class="flex-1 py-3 rounded-xl border-2 border-blue-600 text-blue-600 font-semibold text-sm hover:bg-blue-50 active:scale-95 transition-all">
+              Adicionar ao carrinho
+            </button>
+            <button onclick="handleBuyNow()"
+              class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm active:scale-95 transition-all">
+              Comprar agora
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Produtos relacionados -->
+    <section id="relacionados-section" class="hidden mt-12">
+      <h2 class="text-xl font-bold text-gray-800 mb-5">Você também pode gostar</h2>
+      <div id="relacionados-grid" class="produto-grid"></div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-gray-100 mt-auto">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-center text-gray-400 text-sm">
+      <span id="footer-nome"></span> &copy; <span id="footer-ano"></span>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/produtos.js"></script>
+  <script>
+    let _produto = null;
+    let _qtd = 1;
+
+    async function inicializarPagina() {
+      document.getElementById('header-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-ano').textContent = new Date().getFullYear();
+      document.title = CONFIG.STORE_NAME;
+
+      const slug = getQueryParam('slug');
+      if (!slug) return exibirErro();
+
+      try {
+        _produto = await fetchProdutoPorSlug(slug);
+        if (!_produto) return exibirErro();
+
+        renderProduto(_produto);
+        carregarRelacionados(_produto);
+      } catch (err) {
+        console.error('[produto] Erro:', err);
+        exibirErro();
+      }
+    }
+
+    function renderProduto(p) {
+      document.title = `${p.nome} — ${CONFIG.STORE_NAME}`;
+
+      document.getElementById('produto-imagem').src = getImageUrl(p.imagem_url);
+      document.getElementById('produto-imagem').alt = p.nome;
+      document.getElementById('produto-nome').textContent = p.nome;
+      document.getElementById('produto-descricao').textContent = p.descricao || '';
+
+      if (p.categoria) {
+        const cat = document.getElementById('produto-categoria');
+        cat.textContent = p.categoria;
+        cat.classList.remove('hidden');
+      }
+
+      const temPromo = p.preco_promocional && p.preco_promocional < p.preco;
+      if (temPromo) {
+        document.getElementById('produto-preco-original').textContent = formatPrice(p.preco);
+        document.getElementById('produto-preco-original').classList.remove('hidden');
+        document.getElementById('produto-preco-final').textContent = formatPrice(p.preco_promocional);
+        document.getElementById('produto-badge-promo').classList.remove('hidden');
+      } else {
+        document.getElementById('produto-preco-final').textContent = formatPrice(p.preco);
+      }
+
+      const esgotado = p.em_estoque <= 0;
+      if (esgotado) {
+        document.getElementById('badge-esgotado').classList.remove('hidden');
+        document.getElementById('controles-compra').classList.add('hidden');
+      } else {
+        document.getElementById('estoque-info').textContent =
+          p.em_estoque <= 5 ? `Restam ${p.em_estoque} em estoque` : '';
+      }
+
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('conteudo').classList.remove('hidden');
+    }
+
+    async function carregarRelacionados(p) {
+      if (!p.categoria) return;
+      try {
+        const relacionados = await fetchProdutosRelacionados(p.categoria, p.slug, 4);
+        if (!relacionados.length) return;
+
+        document.getElementById('relacionados-grid').innerHTML =
+          relacionados.map(renderCardProduto).join('');
+        document.getElementById('relacionados-section').classList.remove('hidden');
+      } catch {
+        // Não exibe erro — relacionados são opcionais
+      }
+    }
+
+    // Cache dos produtos relacionados para o handleAddToCart
+    let _relacionados = [];
+    function handleAddToCartRelacionado(produtoId) {
+      // Busca nos relacionados renderizados
+      fetchProdutos().then((todos) => {
+        const produto = todos.find((p) => p.id === produtoId);
+        if (!produto) return;
+        const r = cartAdd(produto, 1);
+        showToast(r === 'added' ? 'Adicionado!' : r === 'max_stock' ? 'Estoque máximo.' : 'Atualizado!',
+          r === 'out_of_stock' ? 'error' : 'success');
+      });
+    }
+
+    // Usado pelos cards de relacionados (mesmo handler do index)
+    function handleAddToCart(produtoId) {
+      if (produtoId) {
+        handleAddToCartRelacionado(produtoId);
+        return;
+      }
+      if (!_produto) return;
+      const resultado = cartAdd(_produto, _qtd);
+      const msgs = {
+        added: 'Produto adicionado ao carrinho!',
+        updated: 'Quantidade atualizada.',
+        max_stock: 'Quantidade máxima atingida.',
+        out_of_stock: 'Produto esgotado.',
+      };
+      showToast(msgs[resultado], resultado === 'out_of_stock' ? 'error' : 'success');
+    }
+
+    function handleBuyNow() {
+      handleAddToCart();
+      setTimeout(() => { window.location.href = 'carrinho.html'; }, 400);
+    }
+
+    function alterarQtd(delta) {
+      if (!_produto) return;
+      const novaQtd = _qtd + delta;
+      if (novaQtd < 1 || novaQtd > _produto.em_estoque) return;
+      _qtd = novaQtd;
+      document.getElementById('qtd-display').textContent = _qtd;
+    }
+
+    function exibirErro() {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('erro').classList.remove('hidden');
+    }
+
+    inicializarPagina();
+  </script>
+</body>
+</html>

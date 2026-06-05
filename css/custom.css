@@ -1,0 +1,162 @@
+/* =============================================================================
+   CUSTOM.CSS — Estilos complementares ao Tailwind CSS
+   ============================================================================= */
+
+/* --- Fonte Inter via Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Utilitário line-clamp (fallback para navegadores sem suporte nativo) --- */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- Aspect ratio quadrado (fallback) --- */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+/* --- Animação de skeleton loader --- */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+/* --- Scrollbar fina (Chrome/Edge) --- */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: #f1f5f9; }
+::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* --- Toast notification --- */
+#toast-container {
+  animation: toast-in 0.25s ease;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* --- Botão primário com ripple sutil --- */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.15s, transform 0.1s;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* --- Input focus consistente --- */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* --- Badge do carrinho --- */
+[data-cart-badge] {
+  min-width: 1.25rem;
+  height: 1.25rem;
+  font-size: 0.65rem;
+  line-height: 1.25rem;
+}
+
+/* --- Card de produto: garante altura uniforme no grid --- */
+.produto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+@media (min-width: 640px) {
+  .produto-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+/* --- Imagem do produto na página de detalhes --- */
+.produto-imagem-detalhe {
+  max-height: 480px;
+  width: 100%;
+  object-fit: contain;
+  background-color: #f9fafb;
+}
+
+/* --- Contador de quantidade --- */
+.qty-btn {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  transition: background-color 0.15s;
+  user-select: none;
+}
+
+/* --- Linha do carrinho --- */
+.cart-row {
+  display: grid;
+  grid-template-columns: 5rem 1fr auto;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  .cart-row {
+    grid-template-columns: 4rem 1fr;
+    grid-template-rows: auto auto;
+  }
+  .cart-row .cart-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+/* --- Página obrigado: ícone de sucesso --- */
+.success-icon {
+  width: 5rem;
+  height: 5rem;
+  background-color: #dcfce7;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2.5rem;
+}
+
+/* --- Print: oculta header e botões na impressão --- */
+@media print {
+  header, .no-print { display: none !important; }
+  body { background: white; }
+}

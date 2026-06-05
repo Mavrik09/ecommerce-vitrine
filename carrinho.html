@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrinho</title>
+  <link rel="stylesheet" href="css/custom.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span id="header-nome" class="font-bold text-gray-800">Voltar</span>
+      </a>
+      <h1 class="text-lg font-semibold text-gray-800">Carrinho</h1>
+      <span class="w-20"></span> <!-- espaço para centralizar o título -->
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
+
+    <!-- Carrinho vazio -->
+    <div id="carrinho-vazio" class="hidden flex flex-col items-center justify-center py-24 text-center text-gray-400">
+      <div class="text-6xl mb-4">🛒</div>
+      <p class="text-xl font-semibold text-gray-600 mb-2">Seu carrinho está vazio</p>
+      <p class="text-sm mb-6">Adicione produtos para continuar.</p>
+      <a href="index.html"
+        class="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+        Ver produtos
+      </a>
+    </div>
+
+    <!-- Conteúdo do carrinho -->
+    <div id="carrinho-conteudo" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Lista de itens (ocupa 2/3) -->
+      <div class="lg:col-span-2 space-y-3">
+        <div id="lista-itens" class="space-y-3">
+          <!-- preenchido por JS -->
+        </div>
+      </div>
+
+      <!-- Resumo e formulário (1/3) -->
+      <div class="space-y-4">
+
+        <!-- Resumo de valores -->
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+          <h2 class="font-semibold text-gray-800 mb-4">Resumo do pedido</h2>
+
+          <div class="space-y-2 text-sm text-gray-600 mb-4">
+            <div class="flex justify-between">
+              <span>Subtotal</span>
+              <span id="resumo-subtotal" class="font-medium">R$ 0,00</span>
+            </div>
+          </div>
+
+          <div class="border-t border-gray-100 pt-4 flex justify-between items-center">
+            <span class="font-bold text-gray-800">Total</span>
+            <span id="resumo-total" class="text-2xl font-bold text-blue-600">R$ 0,00</span>
+          </div>
+        </div>
+
+        <!-- Formulário do comprador -->
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+          <h2 class="font-semibold text-gray-800 mb-4">Seus dados</h2>
+
+          <div class="space-y-4">
+            <div>
+              <label for="campo-nome" class="block text-sm font-medium text-gray-700 mb-1">
+                Nome completo *
+              </label>
+              <input type="text" id="campo-nome" placeholder="João da Silva"
+                class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:border-blue-400 transition-colors" />
+              <p id="campo-nome-erro" class="hidden mt-1 text-xs text-red-500"></p>
+            </div>
+
+            <div>
+              <label for="campo-email" class="block text-sm font-medium text-gray-700 mb-1">
+                E-mail *
+              </label>
+              <input type="email" id="campo-email" placeholder="joao@email.com"
+                class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:border-blue-400 transition-colors" />
+              <p id="campo-email-erro" class="hidden mt-1 text-xs text-red-500"></p>
+            </div>
+
+            <div>
+              <label for="campo-telefone" class="block text-sm font-medium text-gray-700 mb-1">
+                Telefone (com DDD) *
+              </label>
+              <input type="tel" id="campo-telefone" placeholder="11999999999"
+                class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:border-blue-400 transition-colors" />
+              <p id="campo-telefone-erro" class="hidden mt-1 text-xs text-red-500"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Erro geral -->
+        <div id="form-erro"
+          class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
+        </div>
+
+        <!-- Botão finalizar -->
+        <button id="btn-finalizar" onclick="iniciarCheckout()"
+          class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors text-base active:scale-95">
+          Finalizar Compra
+        </button>
+
+        <p class="text-center text-xs text-gray-400">
+          Pagamento seguro processado pela InfinitePay
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-gray-100 mt-auto">
+    <div class="max-w-4xl mx-auto px-4 py-6 text-center text-gray-400 text-sm">
+      <span id="footer-nome"></span> &copy; <span id="footer-ano"></span>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/checkout.js"></script>
+  <script>
+    function inicializarCarrinho() {
+      document.getElementById('header-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-ano').textContent = new Date().getFullYear();
+      document.title = `Carrinho — ${CONFIG.STORE_NAME}`;
+
+      renderCarrinho();
+    }
+
+    function renderCarrinho() {
+      const items = cartGet();
+
+      if (items.length === 0) {
+        document.getElementById('carrinho-vazio').classList.remove('hidden');
+        document.getElementById('carrinho-conteudo').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('carrinho-vazio').classList.add('hidden');
+      document.getElementById('carrinho-conteudo').classList.remove('hidden');
+
+      document.getElementById('lista-itens').innerHTML = items.map(renderItemCarrinho).join('');
+
+      const total = cartTotal();
+      document.getElementById('resumo-subtotal').textContent = formatPrice(total);
+      document.getElementById('resumo-total').textContent = formatPrice(total);
+    }
+
+    function renderItemCarrinho(item) {
+      const preco = cartItemPrice(item);
+      const subtotal = cartItemSubtotal(item);
+      const temPromo = item.preco_promocional && item.preco_promocional < item.preco;
+
+      return `
+        <div class="bg-white rounded-2xl shadow-sm p-4 flex gap-4 items-start"
+             data-item-id="${item.id}">
+          <!-- Imagem -->
+          <a href="produto.html?slug=${item.slug}" class="flex-shrink-0">
+            <img src="${getImageUrl(item.imagem_url)}" alt="${item.nome}"
+              class="w-20 h-20 object-cover rounded-xl bg-gray-100"
+              onerror="this.src='${getImageUrl(null)}'; this.onerror=null;" />
+          </a>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <a href="produto.html?slug=${item.slug}"
+              class="text-sm font-medium text-gray-800 hover:text-blue-600 transition-colors line-clamp-2">
+              ${item.nome}
+            </a>
+            <div class="flex items-baseline gap-2 mt-1">
+              ${temPromo
+                ? `<span class="text-xs text-gray-400 line-through">${formatPrice(item.preco)}</span>
+                   <span class="text-sm font-bold text-blue-600">${formatPrice(preco)}</span>`
+                : `<span class="text-sm font-bold text-gray-700">${formatPrice(preco)}</span>`
+              }
+            </div>
+
+            <!-- Controles de quantidade -->
+            <div class="flex items-center gap-3 mt-3">
+              <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                <button onclick="mudarQtd('${item.id}', ${item.quantidade - 1})"
+                  class="qty-btn bg-gray-50 hover:bg-gray-100 text-gray-700 text-lg w-8 h-8">−</button>
+                <span class="w-8 text-center text-sm font-semibold text-gray-800">${item.quantidade}</span>
+                <button onclick="mudarQtd('${item.id}', ${item.quantidade + 1})"
+                  ${item.quantidade >= item.estoque ? 'disabled class="qty-btn bg-gray-100 text-gray-300 cursor-not-allowed w-8 h-8"' : 'class="qty-btn bg-gray-50 hover:bg-gray-100 text-gray-700 text-lg w-8 h-8"'}>+</button>
+              </div>
+
+              <button onclick="removerItem('${item.id}')"
+                class="text-xs text-red-400 hover:text-red-600 transition-colors underline underline-offset-2">
+                Remover
+              </button>
+            </div>
+          </div>
+
+          <!-- Subtotal -->
+          <div class="text-right flex-shrink-0">
+            <span class="text-sm font-bold text-gray-800">${formatPrice(subtotal)}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function mudarQtd(produtoId, novaQtd) {
+      cartSetQuantity(produtoId, novaQtd);
+      renderCarrinho();
+    }
+
+    function removerItem(produtoId) {
+      cartRemove(produtoId);
+      renderCarrinho();
+      showToast('Item removido do carrinho.', 'info');
+    }
+
+    inicializarCarrinho();
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Obrigado pela compra!</title>
+  <link rel="stylesheet" href="css/custom.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- HEADER mínimo -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 py-3">
+      <a href="index.html" id="header-nome"
+        class="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors">
+        Minha Loja
+      </a>
+    </div>
+  </header>
+
+  <main class="flex-1 flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full">
+
+      <!-- Card de sucesso -->
+      <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
+
+        <!-- Ícone de sucesso -->
+        <div class="success-icon mb-6">✅</div>
+
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">
+          Obrigado pela sua compra!
+        </h1>
+        <p class="text-gray-500 text-sm mb-8">
+          Seu pagamento foi recebido. Você receberá a confirmação no seu e-mail.
+        </p>
+
+        <!-- Detalhes do pedido -->
+        <div class="bg-gray-50 rounded-xl p-4 text-left space-y-3 mb-6">
+
+          <div id="linha-nsu" class="hidden flex justify-between text-sm">
+            <span class="text-gray-500">Nº do pedido</span>
+            <span id="valor-nsu" class="font-semibold text-gray-800"></span>
+          </div>
+
+          <div id="linha-transaction-nsu" class="hidden flex justify-between text-sm">
+            <span class="text-gray-500">Nº da transação</span>
+            <span id="valor-transaction-nsu" class="font-semibold text-gray-800 font-mono text-xs"></span>
+          </div>
+
+          <div id="linha-metodo" class="hidden flex justify-between text-sm">
+            <span class="text-gray-500">Forma de pagamento</span>
+            <span id="valor-metodo" class="font-semibold text-gray-800"></span>
+          </div>
+
+          <div id="linha-slug" class="hidden flex justify-between text-sm">
+            <span class="text-gray-500">Referência</span>
+            <span id="valor-slug" class="font-semibold text-gray-800 font-mono text-xs"></span>
+          </div>
+
+        </div>
+
+        <!-- Link do comprovante -->
+        <div id="comprovante-container" class="hidden mb-6">
+          <a id="link-comprovante" href="#" target="_blank" rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium underline underline-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+            Ver comprovante de pagamento
+          </a>
+        </div>
+
+        <!-- Botão continuar -->
+        <a href="index.html"
+          class="block w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-center transition-colors active:scale-95">
+          Continuar comprando
+        </a>
+
+      </div>
+
+      <!-- Mensagem de suporte -->
+      <p class="text-center text-xs text-gray-400 mt-6">
+        Dúvidas? Entre em contato conosco.
+      </p>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-gray-100 mt-auto">
+    <div class="max-w-2xl mx-auto px-4 py-6 text-center text-gray-400 text-sm">
+      <span id="footer-nome"></span> &copy; <span id="footer-ano"></span>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script>
+    function inicializarObrigado() {
+      document.getElementById('header-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-ano').textContent = new Date().getFullYear();
+      document.title = `Obrigado! — ${CONFIG.STORE_NAME}`;
+
+      // Lê parâmetros retornados pelo InfinitePay na URL de retorno
+      const receiptUrl    = getQueryParam('receipt_url');
+      const orderNsu      = getQueryParam('order_nsu');
+      const slug          = getQueryParam('slug');
+      const captureMethod = getQueryParam('capture_method');
+      const transactionNsu = getQueryParam('transaction_nsu');
+
+      if (orderNsu) {
+        document.getElementById('valor-nsu').textContent = orderNsu;
+        document.getElementById('linha-nsu').classList.remove('hidden');
+      }
+
+      if (transactionNsu) {
+        document.getElementById('valor-transaction-nsu').textContent = transactionNsu;
+        document.getElementById('linha-transaction-nsu').classList.remove('hidden');
+      }
+
+      if (captureMethod) {
+        const metodos = {
+          credit:  'Cartão de crédito',
+          debit:   'Cartão de débito',
+          pix:     'PIX',
+          boleto:  'Boleto',
+        };
+        document.getElementById('valor-metodo').textContent =
+          metodos[captureMethod] || captureMethod;
+        document.getElementById('linha-metodo').classList.remove('hidden');
+      }
+
+      if (slug) {
+        document.getElementById('valor-slug').textContent = slug;
+        document.getElementById('linha-slug').classList.remove('hidden');
+      }
+
+      if (receiptUrl) {
+        document.getElementById('link-comprovante').href = decodeURIComponent(receiptUrl);
+        document.getElementById('comprovante-container').classList.remove('hidden');
+      }
+    }
+
+    inicializarObrigado();
+  </script>
+</body>
+</html>

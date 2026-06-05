@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vitrine</title>
+  <link rel="stylesheet" href="css/custom.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <span id="header-logo" class="hidden">
+          <img id="logo-img" src="" alt="Logo" class="h-8 w-auto" />
+        </span>
+        <span id="header-nome" class="text-xl font-bold text-gray-800">Carregando...</span>
+      </a>
+
+      <a href="carrinho.html" class="relative flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3A1 1 0 006 17h12m-5 4a1 1 0 100-2 1 1 0 000 2zm-6 0a1 1 0 100-2 1 1 0 000 2z"/>
+        </svg>
+        <span
+          data-cart-badge
+          class="hidden absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center px-1">
+          0
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-6">
+
+    <!-- Filtros de categoria -->
+    <div id="filtros-container" class="flex flex-wrap gap-2 mb-6 hidden">
+      <!-- preenchido por produtos.js -->
+    </div>
+
+    <!-- Grid de produtos -->
+    <div id="produtos-grid" class="produto-grid">
+      <!-- Skeleton inicial -->
+    </div>
+
+    <!-- Estado: sem produtos -->
+    <div id="sem-produtos" class="hidden text-center py-20 text-gray-400">
+      <div class="text-5xl mb-4">🛍️</div>
+      <p class="text-lg font-medium">Nenhum produto encontrado.</p>
+      <p class="text-sm mt-1">Tente outro filtro ou volte mais tarde.</p>
+    </div>
+
+    <!-- Estado: erro de carregamento -->
+    <div id="erro-carregamento" class="hidden text-center py-20 text-red-400">
+      <div class="text-5xl mb-4">⚠️</div>
+      <p class="text-lg font-medium">Não foi possível carregar os produtos.</p>
+      <button onclick="inicializarVitrine()" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700">
+        Tentar novamente
+      </button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-gray-100 mt-auto">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-center text-gray-400 text-sm">
+      <span id="footer-nome"></span> &copy; <span id="footer-ano"></span>. Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/carrinho.js"></script>
+  <script src="js/produtos.js"></script>
+  <script>
+    // Cache em memória dos produtos para filtro sem nova requisição
+    let _todosProdutos = [];
+    let _categoriaAtiva = null;
+
+    async function inicializarVitrine() {
+      // Aplica nome da loja
+      document.title = CONFIG.STORE_NAME;
+      document.getElementById('header-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-nome').textContent = CONFIG.STORE_NAME;
+      document.getElementById('footer-ano').textContent = new Date().getFullYear();
+
+      if (CONFIG.STORE_LOGO_URL) {
+        document.getElementById('logo-img').src = CONFIG.STORE_LOGO_URL;
+        document.getElementById('header-logo').classList.remove('hidden');
+      }
+
+      // Skeleton
+      const grid = document.getElementById('produtos-grid');
+      grid.innerHTML = generateSkeletons(8);
+
+      try {
+        const [produtos, categorias] = await Promise.all([
+          fetchProdutos(),
+          fetchCategorias(),
+        ]);
+
+        _todosProdutos = produtos;
+
+        // Renderiza filtros se houver mais de uma categoria
+        if (categorias.length > 1) {
+          const container = document.getElementById('filtros-container');
+          container.innerHTML = renderFiltrosCategorias(categorias, _categoriaAtiva);
+          container.classList.remove('hidden');
+        }
+
+        renderProdutos(_todosProdutos);
+      } catch (err) {
+        console.error('[vitrine] Erro ao carregar:', err);
+        grid.innerHTML = '';
+        document.getElementById('erro-carregamento').classList.remove('hidden');
+      }
+    }
+
+    function renderProdutos(lista) {
+      const grid = document.getElementById('produtos-grid');
+      const semProdutos = document.getElementById('sem-produtos');
+
+      if (!lista || lista.length === 0) {
+        grid.innerHTML = '';
+        semProdutos.classList.remove('hidden');
+        return;
+      }
+
+      semProdutos.classList.add('hidden');
+      grid.innerHTML = lista.map(renderCardProduto).join('');
+    }
+
+    function filtrarPorCategoria(categoria) {
+      _categoriaAtiva = categoria;
+
+      // Atualiza botões de filtro
+      const container = document.getElementById('filtros-container');
+      const categorias = [...new Set(_todosProdutos.map((p) => p.categoria).filter(Boolean))].sort();
+      container.innerHTML = renderFiltrosCategorias(categorias, categoria);
+
+      const filtrados = categoria
+        ? _todosProdutos.filter((p) => p.categoria === categoria)
+        : _todosProdutos;
+
+      renderProdutos(filtrados);
+    }
+
+    // Adiciona produto ao carrinho a partir do card
+    function handleAddToCart(produtoId) {
+      const produto = _todosProdutos.find((p) => p.id === produtoId);
+      if (!produto) return;
+
+      const resultado = cartAdd(produto, 1);
+
+      const mensagens = {
+        added:       'Produto adicionado ao carrinho!',
+        updated:     'Quantidade atualizada no carrinho.',
+        max_stock:   'Quantidade máxima em estoque atingida.',
+        out_of_stock:'Produto esgotado.',
+      };
+      const tipos = {
+        added: 'success', updated: 'success',
+        max_stock: 'info', out_of_stock: 'error',
+      };
+
+      showToast(mensagens[resultado], tipos[resultado]);
+    }
+
+    inicializarVitrine();
+  </script>
+</body>
+</html>
