@@ -7,10 +7,10 @@
 const CONFIG = {
   // --- Supabase ---
   // Encontre em: Supabase → Settings → API → Project URL
-  SUPABASE_URL: 'https://SEU_PROJECT_ID.supabase.co',
+  SUPABASE_URL: 'https://sevturfqcmkuvxludklx.supabase.co',
 
   // Encontre em: Supabase → Settings → API → anon public
-  SUPABASE_ANON_KEY: 'SUA_ANON_KEY_AQUI',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldnR1cmZxY21rdXZ4bHVka2x4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2ODcwNzcsImV4cCI6MjA5NjI2MzA3N30.sHWVCBEa-ZrBTrAjLLWRbzOIh71LbjAZByOJ3jYeotQ',
 
   // --- API do Admin (Vercel) ---
   // URL do projeto ecommerce-admin publicado na Vercel
