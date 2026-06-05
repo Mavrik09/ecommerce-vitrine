@@ -14,7 +14,7 @@ const CONFIG = {
 
   // --- API do Admin (Vercel) ---
   // URL do projeto ecommerce-admin publicado na Vercel
-  ADMIN_API_URL: 'https://SEU_PROJETO.vercel.app',
+  ADMIN_API_URL: 'http://localhost:3000',
 
   // --- Loja ---
   STORE_NAME: 'Minha Loja',
